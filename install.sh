@@ -15,7 +15,8 @@ set -eu
 RELEASE=""   # the current release, such as 0.1.0: set here each time one is published. Empty means none yet.
 VERSION=${SQUERYL_VERSION:-$RELEASE}
 DIR=${SQUERYL_DIR:-$HOME/Squeryl}
-IMAGE=ghcr.io/localseoguide/squeryl-tracker:$VERSION
+IMAGE=ghcr.io/localseoguide/squeryl-tracker:$VERSION     # what the image is called on this computer, wherever it came from
+SOURCE=${SQUERYL_IMAGE_SOURCE:-${IMAGE%:*}}              # where it downloads from
 SERVICE=${SQUERYL_LICENSE_SERVICE:-https://squeryl-license.family-care.cloud/squeryl}
 SUPPORT=support@localseoguide.com
 PROJECT=${SQUERYL_PROJECT:-squeryl}
@@ -25,6 +26,14 @@ PATH="$PATH:/usr/local/bin:/opt/homebrew/bin:/Applications/Docker.app/Contents/R
 say()  { printf '%s\n' "$*"; }
 fail() { printf '❌ %s\n' "$*" >&2; exit 1; }
 field() { printf '%s' "$1" | sed -n "s/.*\"$2\": *\"\([^\"]*\)\".*/\1/p" | head -n 1; }
+registry_of() {   # the name a Docker login file uses for the registry in this image address
+  first=${1%%/*}
+  case "$first" in
+    docker.io | index.docker.io) printf 'https://index.docker.io/v1/' ;;
+    *.* | *:* | localhost) printf '%s' "$first" ;;
+    *) printf 'https://index.docker.io/v1/' ;;   # no registry named: Docker Hub
+  esac
+}
 
 # Before anything else, and before asking for a key: until the first release, there is nothing to install.
 if [ -z "$VERSION" ]; then
@@ -81,16 +90,23 @@ cd "$DIR"
 if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
   say "▶ Downloading Squeryl $VERSION. The first time, this can take a few minutes…"
   user=$(field "$body" user); token=$(field "$body" token)
-  # A throwaway Docker login, used for this one download, so the read token stays nowhere on this computer.
-  login=""
+  # A throwaway Docker login, used for this one download, so the read token stays nowhere on this computer. It starts
+  # with no record of which Docker this computer uses, and Docker Desktop's socket is often not the default one.
+  login="" docker_host=""
   if [ -n "$token" ]; then
+    docker_host=$(docker context inspect --format '{{.Endpoints.docker.Host}}' 2>/dev/null </dev/null || true)
     login=$(mktemp -d)
-    printf '{"auths":{"ghcr.io":{"auth":"%s"}}}\n' "$(printf '%s:%s' "$user" "$token" | base64 | tr -d '\n')" > "$login/config.json"
+    printf '{"auths":{"%s":{"auth":"%s"}}}\n' "$(registry_of "$SOURCE")" "$(printf '%s:%s' "$user" "$token" | base64 | tr -d '\n')" > "$login/config.json"
   fi
   pulled=0
-  docker ${login:+--config "$login"} pull "$IMAGE" </dev/null || pulled=1
+  ( [ -z "$docker_host" ] || export DOCKER_HOST="$docker_host"; docker ${login:+--config "$login"} pull "$SOURCE:$VERSION" </dev/null ) || pulled=1
   [ -z "$login" ] || rm -rf "$login"
   [ "$pulled" = 0 ] || fail "Could not download Squeryl $VERSION. Check that this computer is online. If it keeps happening, write to $SUPPORT."
+  # One name on this computer, wherever it came from, so the installer need not know where that was.
+  if [ "$SOURCE:$VERSION" != "$IMAGE" ]; then
+    docker tag "$SOURCE:$VERSION" "$IMAGE" </dev/null
+    docker image rm "$SOURCE:$VERSION" >/dev/null 2>&1 </dev/null || true
+  fi
 fi
 
 # The real installer travels inside the image, so it always matches the version it installs.
