@@ -17,7 +17,7 @@ VERSION=${SQUERYL_VERSION:-$RELEASE}
 DIR=${SQUERYL_DIR:-$HOME/Squeryl}
 IMAGE=ghcr.io/localseoguide/squeryl-tracker:$VERSION     # what the image is called on this computer, wherever it came from
 SOURCE=${SQUERYL_IMAGE_SOURCE:-${IMAGE%:*}}              # where it downloads from
-SERVICE=${SQUERYL_LICENSE_SERVICE:-https://squeryl-license.family-care.cloud/squeryl}
+SERVICE=${SQUERYL_LICENSE_SERVICE:-https://license.squeryl-ai.cloud/squeryl}
 SUPPORT=support@localseoguide.com
 PROJECT=${SQUERYL_PROJECT:-squeryl}
 # A login that is not a terminal's may not have Docker Desktop's folders on its PATH.
