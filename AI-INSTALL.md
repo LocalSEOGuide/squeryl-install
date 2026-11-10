@@ -44,8 +44,9 @@ If it says Squeryl isn't ready to install yet, tell the person that, and stop. D
 It prints a link beginning `http://localhost:`. Give that link to the person, and don't open or use it yourself. Tell them
 what the browser will ask for:
 1. The terms, and their license, already filled in.
-2. A sign-in, only if their license is for several people.
-3. A code emailed to the address on their license. They can skip this for now, but nothing is collected until it is entered.
+2. A code emailed to the address on their license. Setup can't go on without it. If that mailbox is someone else's, they ask
+   that person for the code. The link keeps working, so they can close the page and come back to it once they have the code.
+3. A sign-in, only if their license is for several people: the email address and password they will sign in to Squeryl with.
 4. Their DataForSEO API login and password, from https://app.dataforseo.com/api-access. They pay DataForSEO directly.
 5. Which AI engines to use.
 6. Their first Project.
