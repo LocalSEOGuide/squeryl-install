@@ -1,0 +1,38 @@
+name: The install did not work
+description: The starter failed, stopped, or left Squeryl in a state you did not expect.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "**This repository is public.** Never paste a license key, an emailed code or a token. Blank them out of any output you share."
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: In your own words, and what you expected instead.
+    validations:
+      required: true
+  - type: dropdown
+    id: system
+    attributes:
+      label: What computer?
+      options:
+        - Mac (Apple Silicon)
+        - Mac (Intel)
+        - Linux server
+        - Windows
+        - Other
+  - type: textarea
+    id: output
+    attributes:
+      label: What the terminal printed
+      description: The command you ran and its output, with keys and codes blanked out.
+      render: shell
+  - type: dropdown
+    id: how-bad
+    attributes:
+      label: How much does it get in your way?
+      options:
+        - I can't install
+        - Annoying, but I got there
+        - Small, whenever you get to it
