@@ -1,0 +1,19 @@
+name: An idea or a request
+description: Something the install should do, check or explain differently.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: "This repository is public. Please keep license keys and client details out of what you write."
+  - type: textarea
+    id: need
+    attributes:
+      label: What are you trying to do?
+      description: The job, or the situation it comes from. Why it matters helps more than how to build it.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help?
+      description: Your idea of how it could work, if you have one.
