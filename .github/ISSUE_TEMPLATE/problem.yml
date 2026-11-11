@@ -1,10 +1,10 @@
 name: The install did not work
-description: The starter failed, stopped, or left Squeryl in a state you did not expect.
+description: The install command failed, stopped, or left Squeryl in a state you did not expect.
 labels: [bug]
 body:
   - type: markdown
     attributes:
-      value: "**This repository is public.** Never paste a license key, an emailed code or a token. Blank them out of any output you share."
+      value: "**This repository is public.** Never paste a license key, an emailed code, a token or an email address, and keep client details out. Blank them out of any output you share."
   - type: textarea
     id: what
     attributes:
@@ -16,17 +16,16 @@ body:
     id: system
     attributes:
       label: What computer?
+      description: Not sure which Mac? The Apple menu → About This Mac shows the chip.
       options:
-        - Mac (Apple Silicon)
-        - Mac (Intel)
-        - Linux server
-        - Windows
-        - Other
+        - Mac with Apple Silicon
+        - Mac with Intel
+        - Something else
   - type: textarea
     id: output
     attributes:
       label: What the terminal printed
-      description: The command you ran and its output, with keys and codes blanked out.
+      description: The command you ran and its output, with keys, codes and email addresses blanked out.
       render: shell
   - type: dropdown
     id: how-bad
