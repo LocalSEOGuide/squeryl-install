@@ -11,6 +11,13 @@ to use it. Your license key came by email, and installing sends a code to that s
    curl -fsSL https://raw.githubusercontent.com/LocalSEOGuide/squeryl-install/main/install.sh | sh
    ```
 
+   If you were given a private version of Squeryl to install, run this instead, with the version you were given in place
+   of `<private-image-tag>`:
+
+   ```sh
+   curl -fsSL https://raw.githubusercontent.com/LocalSEOGuide/squeryl-install/main/install.sh | SQUERYL_VERSION=<private-image-tag> sh
+   ```
+
 3. Paste your license key when it asks.
 4. Open the link it prints. It walks you through the terms, your email code and the rest of setup.
 
