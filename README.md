@@ -29,5 +29,36 @@ never go through it. Assistants we have tested are listed there.
 ## On Windows, or on a server
 Not ready yet.
 
+## Uninstall
+Open **Terminal** and run:
+
+```sh
+cd ~/Squeryl
+./squeryl uninstall
+```
+
+This stops Squeryl and removes it, but keeps all of its data, so `./squeryl start` brings it back just as it was.
+
+### Deleting your data too
+To delete Squeryl's data from this computer as well, run this instead, and type `delete` when it asks:
+
+```sh
+cd ~/Squeryl
+./squeryl uninstall --delete-data
+```
+
+Your Projects, prompts, answers and sign-ins are deleted. The `backups` folder in `Squeryl` stays, and your settings are
+saved into it, so you can restore a backup on a new installation later; the uninstall prints the two commands for that.
+Your license key keeps working: installing again sends a new code to your email.
+
+To remove every last trace, after `--delete-data`:
+
+1. Move the `Squeryl` folder in your home folder to the Trash. This deletes your backups too, so copy any you want to
+   keep somewhere else first.
+2. In Docker Desktop, open **Images** and delete `ghcr.io/localseoguide/squeryl-tracker`.
+
+Delete the folder only after `--delete-data`. Without it, Squeryl's data stays inside Docker, and the folder holds the
+command that removes it.
+
 ## Need help?
 Write to support@localseoguide.com.
