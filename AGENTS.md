@@ -20,6 +20,10 @@ inside each image, so it always matches the version it installs: fixes to the in
 - **`AI-INSTALL.md` is followed by other people's assistants.** Keep it to installing, and list an assistant under "Tested with" only
   after a real test.
 - **Stay readable:** the README invites people to read the script, so a clever line costs more here than a long one.
+- **Show the whole of every command.** GitHub doesn't wrap a code block: a long line scrolls sideways, and macOS hides the
+  scrollbar, so the page can show less than the copy button copies. Keep each line of a command in a document short, and
+  give the part that runs something (`| sh`) and anything a reader must fill in (`SQUERYL_VERSION=…`) a line of their own,
+  ending the line before it with `\` or `|`. Then only an address can ever be cut short, which a reader can see.
 - **Prove a change** by piping the script into `sh`, using a folder of your own (`SQUERYL_DIR`), an image already on the machine
   (`SQUERYL_VERSION`), a key in a file (`SQUERYL_LICENSE_KEY_FILE`) and a stand-in service (`SQUERYL_LICENSE_SERVICE`), then read what it
   printed as a customer would.
