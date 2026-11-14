@@ -8,14 +8,18 @@ to use it. Your license key came by email, and installing sends a code to that s
 2. Open **Terminal** (press Command + Space and type Terminal), then run:
 
    ```sh
-   curl -fsSL https://raw.githubusercontent.com/LocalSEOGuide/squeryl-install/main/install.sh | sh
+   curl -fsSL \
+     https://raw.githubusercontent.com/LocalSEOGuide/squeryl-install/main/install.sh |
+     sh
    ```
 
    If you were given a private version of Squeryl to install, run this instead, with the version you were given in place
    of `<private-image-tag>`:
 
    ```sh
-   curl -fsSL https://raw.githubusercontent.com/LocalSEOGuide/squeryl-install/main/install.sh | SQUERYL_VERSION=<private-image-tag> sh
+   curl -fsSL \
+     https://raw.githubusercontent.com/LocalSEOGuide/squeryl-install/main/install.sh |
+     SQUERYL_VERSION=<private-image-tag> sh
    ```
 
 3. Paste your license key when it asks.
