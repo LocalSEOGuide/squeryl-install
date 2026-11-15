@@ -1,8 +1,8 @@
 #!/bin/sh
-# Installs Squeryl on this computer. It needs only Docker Desktop and your license key, and it is short on purpose, so
-# you can read it.
+# Installs Squeryl on this computer, a Mac or Linux. It needs only Docker (Docker Desktop on a Mac) and your license key,
+# and it is short on purpose, so you can read it.
 #
-# What it does: checks Docker is running, asks for your license key, checks that key with Squeryl's license service, makes a
+# What it does: checks Docker is installed, running and usable, asks for your license key, checks that key with Squeryl's license service, makes a
 # folder (~/Squeryl), downloads the Squeryl image, copies the real installer out of that image, and runs it. Nothing is
 # installed outside that folder and Docker. Your key is kept in that folder and goes nowhere else.
 #
@@ -42,18 +42,53 @@ if [ -z "$VERSION" ]; then
   exit 1
 fi
 
-command -v docker >/dev/null 2>&1 || fail "Docker Desktop is not installed. Get it from https://www.docker.com/products/docker-desktop/, open it once, then run this again."
-if ! docker info >/dev/null 2>&1; then
-  [ "$(uname -s)" = Darwin ] || fail "Docker is installed but not running. Start it, then run this again."
-  say "▶ Starting Docker Desktop…"
-  open -a Docker 2>/dev/null || true
-  tries=0
-  until docker info >/dev/null 2>&1; do
-    tries=$((tries + 1))
-    [ "$tries" -le 60 ] || fail "Docker Desktop did not start within two minutes. Open it, wait until it says it is running, then run this again."
-    sleep 2
-  done
+# A Mac uses Docker Desktop. Linux usually has Docker Engine, run by the system, though Docker Desktop exists there too.
+case "$(uname -s)" in
+  Darwin)
+    DOCKER="Docker Desktop"
+    GET_DOCKER="Get it from https://www.docker.com/products/docker-desktop/, open it once, then run this again."
+    GET_COMPOSE="Update Docker Desktop to the current version, then run this again." ;;
+  Linux)
+    DOCKER="Docker"
+    GET_DOCKER="Install Docker Engine, with its Compose plugin, as https://docs.docker.com/engine/install/ says, then run this again."
+    GET_COMPOSE="Install Docker's Compose plugin, as https://docs.docker.com/compose/install/linux/ says, then run this again." ;;
+  *) fail "This installer works on a Mac or on Linux. Windows isn't ready yet: write to $SUPPORT and we'll let you know when it is." ;;
+esac
+
+command -v docker >/dev/null 2>&1 || fail "$DOCKER is not installed. $GET_DOCKER"
+if ! problem=$(docker info 2>&1 >/dev/null </dev/null); then
+  if [ "$(uname -s)" = Darwin ]; then
+    say "▶ Starting Docker Desktop…"
+    open -a Docker 2>/dev/null || true
+    tries=0
+    until docker info >/dev/null 2>&1 </dev/null; do
+      tries=$((tries + 1))
+      [ "$tries" -le 60 ] || fail "Docker Desktop did not start within two minutes. Open it, wait until it says it is running, then run this again."
+      sleep 2
+    done
+  else
+    case "$problem" in
+      *"permission denied"*)
+        fail "Your account, $(id -un), is not allowed to use Docker. Add it to the docker group with: sudo usermod -aG docker $(id -un)
+   Then sign out and back in, or start a new SSH session, and run this again." ;;
+    esac
+    if [ "$(docker context show 2>/dev/null </dev/null)" = desktop-linux ]; then
+      fail "Docker Desktop is not running. Start it, wait until it says it is running, then run this again."
+    fi
+    if command -v systemctl >/dev/null 2>&1; then
+      fail "Docker is installed but not running. Start it, and have it start with this computer, with: sudo systemctl enable --now docker
+   Then run this again."
+    fi
+    fail "Docker is installed but not running. Start it, then run this again."
+  fi
 fi
+docker compose version >/dev/null 2>&1 </dev/null || fail "Docker Compose is missing. $GET_COMPOSE"
+# Squeryl's image is published for 64-bit Intel or AMD (amd64) and 64-bit ARM (arm64) computers.
+arch=$(docker version --format '{{.Server.Arch}}' 2>/dev/null </dev/null || true)
+case "$arch" in
+  amd64 | arm64 | "") ;;
+  *) fail "Squeryl runs on 64-bit Intel, AMD or ARM computers, and Docker here says this one is $arch." ;;
+esac
 
 [ ! -f "$DIR/.env" ] || fail "Squeryl is already installed in $DIR. See how it is doing with: cd \"$DIR\" && ./squeryl status"
 [ -z "$(docker ps -aq --filter "label=com.docker.compose.project=$PROJECT" </dev/null)$(docker volume ls -q --filter "label=com.docker.compose.project=$PROJECT" </dev/null)" ] \

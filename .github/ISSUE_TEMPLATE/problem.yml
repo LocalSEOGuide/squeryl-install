@@ -20,6 +20,7 @@ body:
       options:
         - Mac with Apple Silicon
         - Mac with Intel
+        - Linux
         - Something else
   - type: textarea
     id: output
