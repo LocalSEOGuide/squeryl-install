@@ -37,11 +37,25 @@ If you use an AI assistant that can run commands on your computer, you can give 
 Your assistant works from [AI-INSTALL.md](AI-INSTALL.md), and you still finish setup yourself in your browser, so your passwords
 never go through it. Assistants we have tested are listed there.
 
-## On Windows, or on a server
-Not ready yet.
+## On Linux
+1. Install [Docker Engine](https://docs.docker.com/engine/install/) with its Compose plugin, or
+   [Docker Desktop](https://docs.docker.com/desktop/setup/install/linux/), and start it. To use Docker without `sudo`,
+   your account needs to be in the `docker` group: the installer tells you if it isn't, and how to add it.
+2. In a terminal, run the same command as on a Mac (step 2 above), as yourself rather than with `sudo`.
+3. Paste your license key when it asks, and open the link it prints.
+
+Squeryl answers only on the computer it is installed on, at `http://localhost`. On a server you reach over SSH, the
+installer prints one more command to run on your own computer, which opens a private tunnel to it, so the link works
+in your own browser. Squeryl keeps collecting while the server and Docker run; it does not need the tunnel for that.
+
+Already run a reverse proxy and want Squeryl at an address of your own? Once it is installed, the `README.md` in your
+`Squeryl` folder says what to set, under "Reaching it from other computers".
+
+## On Windows, or for a whole team on a server
+Not ready yet. A server install with its own web address and HTTPS, for everyone in a team, is coming.
 
 ## Uninstall
-Open **Terminal** and run:
+Open **Terminal** (or, on Linux, a terminal) and run:
 
 ```sh
 cd ~/Squeryl
@@ -64,9 +78,16 @@ Your license key keeps working: installing again sends a new code to your email.
 
 To remove every last trace, after `--delete-data`:
 
-1. Move the `Squeryl` folder in your home folder to the Trash. This deletes your backups too, so copy any you want to
-   keep somewhere else first.
-2. In Docker Desktop, open **Images** and delete `ghcr.io/localseoguide/squeryl-tracker`.
+1. Move the `Squeryl` folder in your home folder to the Trash, or on Linux run `rm -rf ~/Squeryl`. This deletes your
+   backups too, so copy any you want to keep somewhere else first.
+2. Delete Squeryl's image: in Docker Desktop, open **Images** and delete `ghcr.io/localseoguide/squeryl-tracker`. Or,
+   on any computer, run:
+
+   ```sh
+   docker images --format '{{.Repository}}:{{.Tag}}' \
+     ghcr.io/localseoguide/squeryl-tracker |
+     xargs docker image rm
+   ```
 
 Delete the folder only after `--delete-data`. Without it, Squeryl's data stays inside Docker, and the folder holds the
 command that removes it.

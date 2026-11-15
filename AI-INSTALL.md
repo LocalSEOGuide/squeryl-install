@@ -15,12 +15,16 @@ paste one into this conversation, tell them it isn't needed here and that they m
 You don't complete the browser steps, even if you can control a browser.
 
 ## 1. Check the computer
-This installer works on a Mac. On anything else, say that isn't ready yet, and stop.
+This installer works on a Mac or on Linux. On anything else, say that isn't ready yet, and stop. Run it as the person's own
+account, never with `sudo`.
 
-Run `docker info`. If Docker Desktop isn't installed or isn't running:
-- Send the person to https://www.docker.com/products/docker-desktop/ to install it. They accept Docker's terms and enter
-  their own password, so don't install it for them, by Homebrew or any other way.
-- Have them open it once, and wait until they say it is running.
+Run `docker info`. If Docker isn't installed or isn't running:
+- On a Mac, send the person to https://www.docker.com/products/docker-desktop/ to install Docker Desktop. On Linux, send them
+  to https://docs.docker.com/engine/install/ for Docker Engine and its Compose plugin. They accept Docker's terms and enter
+  their own password, so don't install it for them, by Homebrew, `apt` or any other way.
+- Have them start it, and wait until they say it is running.
+- On Linux, if `docker info` says permission denied, their account is not in the `docker` group. Give them the command the
+  installer prints for that; it needs their password, and they then sign out and back in, or start a new SSH session.
 - Run `docker info` again to confirm.
 
 ## 2. Get the license key
@@ -41,8 +45,9 @@ The first run downloads Squeryl, which can take a few minutes.
 If it says Squeryl isn't ready to install yet, tell the person that, and stop. Don't look for another version to install.
 
 ## 4. Hand over the link
-It prints a link beginning `http://localhost:`. Give that link to the person, and don't open or use it yourself. Tell them
-what the browser will ask for:
+It prints a link beginning `http://localhost:`. Give that link to the person, and don't open or use it yourself. If this
+computer is a server they reach over SSH, it also prints an `ssh -N -L …` command: they run that on their own computer, in a
+terminal of its own, and leave it open while they use the link. Tell them what the browser will ask for:
 1. The terms, and their license, already filled in.
 2. A code emailed to the address on their license. Setup can't go on without it. If that mailbox is someone else's, they ask
    that person for the code. The link keeps working, so they can close the page and come back to it once they have the code.
@@ -58,9 +63,10 @@ Everything lives in the `Squeryl` folder in their home folder. When they say the
 cd ~/Squeryl && ./squeryl status
 ```
 
-It ends with one next step. Explain it in plain words, and repeat until it says nothing needs doing. Then suggest that, in Docker
-Desktop's settings, they turn on starting it when they sign in, because Squeryl only collects while this computer is awake
-and Docker Desktop is running.
+It ends with one next step. Explain it in plain words, and repeat until it says nothing needs doing. Then, on a Mac, suggest
+that in Docker Desktop's settings they turn on starting it when they sign in, because Squeryl only collects while this
+computer is awake and Docker Desktop is running. On Linux, pass on what the installer said about Docker starting with the
+computer.
 
 ## If something goes wrong
 Stop, and don't improvise. In particular:
