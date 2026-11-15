@@ -42,6 +42,25 @@ jobs:
           if ($out -notmatch "isn't ready to install yet") { throw 'did not say it is not ready' }
           'the window is still open'
           $global:LASTEXITCODE = 0
+      - name: This runner's Docker is running, with its Windows containers
+        shell: powershell
+        # The runner's Docker service is not always up when a job starts, and a check that the installer stops at
+        # Windows containers needs it answering. Not part of what is tested: Squeryl's own scripts start Docker Desktop.
+        run: |
+          $ErrorActionPreference = 'Continue'
+          $service = Get-Service docker -ErrorAction SilentlyContinue
+          if (-not $service) { throw 'this runner has no docker service' }
+          if ($service.Status -ne 'Running') { Start-Service docker }
+          $tries = 0
+          while ($true) {
+            docker info 2>&1 | Out-Null
+            if ($LASTEXITCODE -eq 0) { break }
+            $tries++
+            if ($tries -gt 60) { throw 'the runner''s docker did not answer within two minutes' }
+            Start-Sleep -Seconds 2
+          }
+          "docker here runs $(docker version --format '{{.Server.Os}}') containers"
+          $global:LASTEXITCODE = 0
       - name: Given a version, it stops at Docker, says how to switch to Linux containers, and makes no folder
         shell: powershell
         run: |
