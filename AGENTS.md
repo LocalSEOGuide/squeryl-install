@@ -6,15 +6,21 @@ customer names or plans.
 **Helping someone install Squeryl?** You don't need to change anything here. Follow [AI-INSTALL.md](AI-INSTALL.md).
 
 ## Changing this repository
-It holds one small starter, kept short so that anyone can read it before running it. `install.sh` checks Docker, makes
-the folder, downloads the image, copies the real installer out of that image and runs it. The real installer travels
-inside each image, so it always matches the version it installs: fixes to the installer belong there, not here.
+It holds one small starter, in two forms, kept short so that anyone can read it before running it: `install.sh` for a Mac
+or Linux, and `install.ps1` for Windows. Each checks Docker, makes the folder, downloads the image, copies the real
+installer out of that image and runs it. The real installer travels inside each image, so it always matches the version it
+installs: fixes to the installer belong there, not here. A change to one starter belongs in the other too.
 
-- **Plain `sh` only.** It runs on customers' machines, usually piped from `curl`.
+- **`install.sh` is plain `sh` only.** It runs on customers' machines, usually piped from `curl`.
 - **Nothing it runs may read from stdin**, because when piped, stdin is the script itself. That is why each command that
   could read has `</dev/null`.
-- **Each release changes one line:** `RELEASE` in `install.sh`. While it is empty, the starter says Squeryl isn't ready yet
-  and stops before asking for anything; `SQUERYL_VERSION` overrides it for testing.
+- **`install.ps1` is for Windows PowerShell 5.1, which every Windows 11 has, and is plain ASCII**, because 5.1 reads a
+  script with no byte-order mark in the local code page. It runs as `irm … | iex` inside the person's own window, so it
+  never calls `exit`, which would close that window before they could read why: a problem throws, is reported, and the
+  script stops. GitHub's Windows runner checks it on every pull request (`.github/workflows/windows.yml`).
+- **Each release changes one line in each starter:** `RELEASE` in `install.sh` and `$Release` in `install.ps1`, the same
+  value; the Windows check fails when they differ. While it is empty, the starter says Squeryl isn't ready yet and stops
+  before asking for anything; `SQUERYL_VERSION` overrides it for testing.
 - **No token or secret, ever, even disguised.** GitHub revokes a token pushed to a public repository. The image's read token
   comes from the license service, for whoever holds a license key.
 - **`AI-INSTALL.md` is followed by other people's assistants.** Keep it to installing, and list an assistant under "Tested with" only
@@ -26,5 +32,6 @@ inside each image, so it always matches the version it installs: fixes to the in
   ending the line before it with `\` or `|`. Then only an address can ever be cut short, which a reader can see.
 - **Prove a change** by piping the script into `sh`, using a folder of your own (`SQUERYL_DIR`), an image already on the machine
   (`SQUERYL_VERSION`), a key in a file (`SQUERYL_LICENSE_KEY_FILE`) and a stand-in service (`SQUERYL_LICENSE_SERVICE`), then read what it
-  printed as a customer would.
+  printed as a customer would. `install.ps1` takes the same settings; on a Mac or Linux, in PowerShell 7, it runs only with
+  `SQUERYL_PS_ON_UNIX=1`, which is how the tracker's rehearsal runs it (`sh install/rehearse.sh --powershell`).
 - **Changes go through a pull request.** People run this script straight from `main`, so a person reviews each change.

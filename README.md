@@ -51,11 +51,37 @@ in your own browser. Squeryl keeps collecting while the server and Docker run; i
 Already run a reverse proxy and want Squeryl at an address of your own? Once it is installed, the `README.md` in your
 `Squeryl` folder says what to set, under "Reaching it from other computers".
 
-## On Windows, or for a whole team on a server
+## On Windows 11
+**New, and still being tested.** If anything goes wrong, write to support@localseoguide.com.
+
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) and open it once.
+2. Open **PowerShell** (press the Windows key, type PowerShell and press Enter), as yourself rather than as an
+   administrator, then run:
+
+   ```powershell
+   irm https://raw.githubusercontent.com/LocalSEOGuide/squeryl-install/main/install.ps1 |
+     iex
+   ```
+
+   If you were given a private version of Squeryl to install, run this instead, with the version you were given in place
+   of `<private-image-tag>`:
+
+   ```powershell
+   $env:SQUERYL_VERSION = '<private-image-tag>'
+   irm https://raw.githubusercontent.com/LocalSEOGuide/squeryl-install/main/install.ps1 |
+     iex
+   ```
+
+3. Paste your license key when it asks, and open the link it prints.
+
+This puts everything in a `Squeryl` folder in your user folder, with the guide in it as `README.md`. Prefer to read the
+script first? [install.ps1](install.ps1) is short.
+
+## For a whole team on a server
 Not ready yet. A server install with its own web address and HTTPS, for everyone in a team, is coming.
 
 ## Uninstall
-Open **Terminal** (or, on Linux, a terminal) and run:
+Open **Terminal** (on Windows, **PowerShell**; on Linux, a terminal) and run:
 
 ```sh
 cd ~/Squeryl
@@ -78,10 +104,10 @@ Your license key keeps working: installing again sends a new code to your email.
 
 To remove every last trace, after `--delete-data`:
 
-1. Move the `Squeryl` folder in your home folder to the Trash, or on Linux run `rm -rf ~/Squeryl`. This deletes your
-   backups too, so copy any you want to keep somewhere else first.
+1. Move the `Squeryl` folder in your home folder to the Trash (on Windows, delete it in File Explorer), or on Linux run
+   `rm -rf ~/Squeryl`. This deletes your backups too, so copy any you want to keep somewhere else first.
 2. Delete Squeryl's image: in Docker Desktop, open **Images** and delete `ghcr.io/localseoguide/squeryl-tracker`. Or,
-   on any computer, run:
+   on a Mac or Linux, run:
 
    ```sh
    docker images --format '{{.Repository}}:{{.Tag}}' \

@@ -1,0 +1,67 @@
+# install.ps1 on a real Windows, in Windows PowerShell 5.1, run the two ways people run it: piped into iex in their own
+# window, and saved and run as a file. GitHub's Windows runners run Docker with Windows containers, so the starter must
+# stop there and say how to switch, which is also how far a run can get here: the rest is tested where Squeryl's image runs.
+name: windows
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  starter:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Windows PowerShell 5.1 reads it, and it is plain ASCII
+        shell: powershell
+        run: |
+          if ($PSVersionTable.PSEdition -ne 'Desktop') { throw 'not Windows PowerShell' }
+          $e = $null
+          [void][Management.Automation.Language.Parser]::ParseFile("$PWD\install.ps1", [ref]$null, [ref]$e)
+          if ($e) { $e | ForEach-Object { $_.ToString() }; exit 1 }
+          if ([IO.File]::ReadAllBytes("$PWD\install.ps1") | Where-Object { $_ -ge 0x80 }) { throw 'install.ps1 has a byte beyond ASCII' }
+      - name: Both starters name the same release
+        shell: powershell
+        run: |
+          $sh = [regex]::Match((Get-Content -Raw install.sh), '(?m)^RELEASE="([^"]*)"').Groups
+          $ps = [regex]::Match((Get-Content -Raw install.ps1), "(?m)^  \`$Release = '([^']*)'").Groups
+          if (-not $sh[0].Success -or -not $ps[0].Success) { throw 'a RELEASE line is missing' }
+          if ($sh[1].Value -ne $ps[1].Value) { throw "install.sh says '$($sh[1].Value)' and install.ps1 says '$($ps[1].Value)'" }
+          "both say '$($sh[1].Value)'"
+      - name: Piped into iex, with no release yet, it says so and leaves the window open
+        shell: powershell
+        run: |
+          $out = & { Invoke-Expression (Get-Content -Raw install.ps1) } 6>&1 | Out-String
+          $out
+          if ($LASTEXITCODE -ne 1) { throw "exited $LASTEXITCODE, not 1" }
+          if ($out -notmatch "isn't ready to install yet") { throw 'did not say it is not ready' }
+          'the window is still open'
+          $global:LASTEXITCODE = 0
+      - name: Given a version, it stops at Docker, says how to switch to Linux containers, and makes no folder
+        shell: powershell
+        run: |
+          $env:SQUERYL_VERSION = 'sha-test'
+          $env:SQUERYL_DIR = "$env:RUNNER_TEMP\Squeryl"
+          Set-Content -Path "$env:RUNNER_TEMP\key" -Value 'ABCDEF-123456'
+          $env:SQUERYL_LICENSE_KEY_FILE = "$env:RUNNER_TEMP\key"
+          # In a PowerShell of its own, because the starter writes a problem to the error output itself, past this one's streams.
+          $ErrorActionPreference = 'Continue'
+          $out = powershell -NoProfile -Command "Invoke-Expression (Get-Content -Raw install.ps1); exit `$LASTEXITCODE" 2>&1 | Out-String
+          $code = $LASTEXITCODE
+          $out
+          if ($code -ne 1) { throw "exited $code, not 1" }
+          if ($out -notmatch 'Switch to Linux containers') { throw 'did not say how to switch' }
+          if (Test-Path $env:SQUERYL_DIR) { throw 'it made a folder' }
+          $global:LASTEXITCODE = 0
+      - name: Saved and run as a file, as an assistant runs it, its exit code says it stopped
+        shell: cmd
+        run: |
+          set SQUERYL_VERSION=
+          powershell -NoProfile -ExecutionPolicy Bypass -File install.ps1
+          if not errorlevel 1 (echo it exited 0 & exit /b 1)
+          echo exited %errorlevel%, as it should

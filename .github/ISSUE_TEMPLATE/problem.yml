@@ -21,6 +21,7 @@ body:
         - Mac with Apple Silicon
         - Mac with Intel
         - Linux
+        - Windows 11
         - Something else
   - type: textarea
     id: output
