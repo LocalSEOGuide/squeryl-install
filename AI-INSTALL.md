@@ -54,7 +54,7 @@ terminal of its own, and leave it open while they use the link. Tell them what t
 3. A sign-in, only if their license is for several people: the email address and password they will sign in to Squeryl with.
 4. Their DataForSEO API login and password, from https://app.dataforseo.com/api-access. They pay DataForSEO directly.
 5. Which AI engines to use.
-6. Their first Project.
+6. Their first Brand: the name they want tracked. Its first Project is made afterwards, on the Brand's own page.
 
 ## 5. See it through
 Everything lives in the `Squeryl` folder in their home folder. When they say they have gone through setup, run:
