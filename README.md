@@ -1,9 +1,17 @@
-# Install Squeryl
+# Squeryl
 
 Squeryl tracks how AI answers talk about your brands. It runs on your own computer or server, and you need a license
 to use it. Your license key came by email, and installing sends a code to that same address.
 
-## On a Mac
+- [Install](#install): [on a Mac](#on-a-mac) · [with an AI assistant](#with-an-ai-assistant) ·
+  [on Linux](#on-linux) · [on Windows 11](#on-windows-11)
+- [Update](#update)
+- [Uninstall](#uninstall)
+- [Need help?](#need-help)
+
+## Install
+
+### On a Mac
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) and open it once.
 2. Open **Terminal** (press Command + Space and type Terminal), then run:
 
@@ -28,7 +36,7 @@ to use it. Your license key came by email, and installing sends a code to that s
 This puts everything in a `Squeryl` folder in your home folder, and the guide is in there as `README.md`. Prefer to read
 a script before running it? [install.sh](install.sh) is short.
 
-## With an AI assistant
+### With an AI assistant
 If you use an AI assistant that can run commands on your computer, you can give it this prompt instead:
 
 > Install Squeryl on this computer by following
@@ -37,7 +45,7 @@ If you use an AI assistant that can run commands on your computer, you can give 
 Your assistant works from [AI-INSTALL.md](AI-INSTALL.md), and you still finish setup yourself in your browser, so your passwords
 never go through it. Assistants we have tested are listed there.
 
-## On Linux
+### On Linux
 1. Install [Docker Engine](https://docs.docker.com/engine/install/) with its Compose plugin, or
    [Docker Desktop](https://docs.docker.com/desktop/setup/install/linux/), and start it. To use Docker without `sudo`,
    your account needs to be in the `docker` group: the installer tells you if it isn't, and how to add it.
@@ -51,9 +59,7 @@ in your own browser. Squeryl keeps collecting while the server and Docker run; i
 Already run a reverse proxy and want Squeryl at an address of your own? Once it is installed, the `README.md` in your
 `Squeryl` folder says what to set, under "Reaching it from other computers".
 
-## On Windows 11
-**New, and still being tested.** If anything goes wrong, write to support@localseoguide.com.
-
+### On Windows 11
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) and open it once.
 2. Open **PowerShell** (press the Windows key, type PowerShell and press Enter), as yourself rather than as an
    administrator, then run:
@@ -77,8 +83,39 @@ Already run a reverse proxy and want Squeryl at an address of your own? Once it 
 This puts everything in a `Squeryl` folder in your user folder, with the guide in it as `README.md`. Prefer to read the
 script first? [install.ps1](install.ps1) is short.
 
-## For a whole team on a server
+### For a whole team on a server
 Not ready yet. A server install with its own web address and HTTPS, for everyone in a team, is coming.
+
+## Update
+Squeryl does not update by itself. When there is a new version, open **Terminal** (on Windows, **PowerShell**; on
+Linux, a terminal) and run this, with the new version's number in place of `<version>`:
+
+```sh
+cd ~/Squeryl
+./squeryl update <version>
+```
+
+If you were given a private version of Squeryl, run this instead, with the version you were given in place of
+`<private-image-tag>`:
+
+```sh
+cd ~/Squeryl
+./squeryl update <private-image-tag>
+```
+
+Squeryl needs to be running (`./squeryl start` if it isn't). It backs up first, then moves to the new version, and your
+data, settings and license carry over. `./squeryl status` shows which version you are on.
+
+### Going back
+If the new version does not start, or you would rather stay on the one before, run:
+
+```sh
+cd ~/Squeryl
+./squeryl rollback
+```
+
+This returns to the version you had before the last update. If that update changed how your data is stored, the data
+goes back to the backup taken just before it, and anything added since is set aside.
 
 ## Uninstall
 Open **Terminal** (on Windows, **PowerShell**; on Linux, a terminal) and run:
