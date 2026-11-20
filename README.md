@@ -98,7 +98,7 @@ cd ~/Squeryl
 ./squeryl uninstall --delete-data
 ```
 
-Your Projects, prompts, answers and sign-ins are deleted. The `backups` folder in `Squeryl` stays, and your settings are
+Your Brands, Campaigns, prompts, answers and sign-ins are deleted. The `backups` folder in `Squeryl` stays, and your settings are
 saved into it, so you can restore a backup on a new installation later; the uninstall prints the two commands for that.
 Your license key keeps working: installing again sends a new code to your email.
 
